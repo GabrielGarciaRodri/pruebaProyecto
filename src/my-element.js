@@ -1,8 +1,154 @@
 import { LitElement, css, html } from 'lit'
 
-
 export class MyElement extends LitElement {
   static styles = css`
+    
+
+    :host{
+      --clr-main: #4b33a8;
+      --clr-main-light: #785ce9;
+      --clr-white: #ececec;
+      --clr-gray: #e2e2e2;
+      --clr-red: #961818;
+    }
+    *{
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Rubik', sans-serif;
+    }
+
+    h1, h2, h3, h4, h5, h6, p, a, input, textarea, ul{
+      margin: 0;
+      padding: 0;
+    }
+
+    ul {
+      list-style-type: none;
+    }
+
+    a{
+      text-decoration: none;
+      color: var(--clr-main);
+    }
+
+    .wrapper {
+      display: grid;
+      grid-template-columns: 1fr 4fr;
+      background-color: var(--clr-main);
+
+    }
+    aside{
+      padding: 2rem;
+      padding-right: 0;
+      color: white;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .logo{
+      font-weight: 400;
+      font-size: 1.3rem;
+    }
+
+    .menu{
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+    }
+
+    .boton-menu{
+      background-color: transparent;
+      border: 0;
+      color: var(--clr-white);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-weight: 600;
+      padding: 1rem;
+      font-size: .85rem;
+      width: 100%;
+    }
+
+    .boton-menu.active{
+      background-color: var(--clr-white);
+      color: var(--clr-main);
+      border-top-left-radius: 1rem;
+      border-bottom-left-radius: 1rem;
+      position: relative;
+    }
+
+    .boton-menu.active::before{
+      content: '';
+      position: absolute;
+      width: 1rem;
+      height: 2rem;
+      background-color: transparent;
+      border-bottom-right-radius: .5rem;
+      box-shadow: 0 1rem 0 var(--clr-white);
+    }
+
+    .boton-menu.active::after{
+      content: '';
+      position: absolute;
+      width: 1rem;
+      height: 2rem;
+      top: 100%;
+      right: 0;
+      background-color: transparent;
+      border-top-right-radius: .5rem;
+      box-shadow: 0 -1rem 0 var(--clr-white);
+    }
+
+    .boton-carrito{
+      margin-top: 2rem;
+    }
+
+    .numerito{
+      background-color: var(--clr-white);
+      color: var(--clr-main);
+      padding: .15rem .25rem;
+      border-radius: .25rem;
+    }
+
+    .boton-carrito.active .numerito{
+      background-color: var(--clr-main);
+      color: var(--clr-white);
+    }
+
+    .texto-footer{
+      color: var(--clr-main-light);
+      font-size: .85rem;
+    }
+
+    main {
+      background-color: var(--clr-white);
+      margin: 1rem;
+      margin-left: 0;
+      border-radius: 2rem;
+      padding: 3rem;
+    }
+
+    .titulo-principal{
+      color: var(--clr-main);
+      margin-bottom: 2rem;
+
+    }
+
+    .contenedor-productos {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-gap: 1rem;
+    }
+
+
+    
+
     .product {
       border: 1px solid #ccc;
       padding: 10px;
@@ -51,7 +197,55 @@ export class MyElement extends LitElement {
 
   render() {
     return html`
-      <h1>Productos</h1>
+
+    <div class="wrapper">
+    <header class="header-mobile">
+        <h1 class="logo">CarpiShop</h1>
+        <button class="open-menu" id="open-menu">
+            <i class="bi bi-list"></i>
+        </button>
+    </header>
+    <aside>
+        <button class="close-menu" id="close-menu">
+            <i class="bi bi-x"></i>
+        </button>
+        <header>
+            <h1 class="logo">CarpiShop</h1>
+        </header>
+        <nav>
+            <ul class="menu">
+                <li>
+                    <button id="todos" class="boton-menu boton-categoria active"><i class='bx bxs-hand-right'></i>Todos los productos</button>
+                </li>
+                <li>
+                    <button id="abrigos" class="boton-menu boton-categoria"><i class="bi bi-hand-index-thumb"></i> Abrigos</button>
+                </li>
+                <li>
+                    <button id="camisetas" class="boton-menu boton-categoria"><i class="bi bi-hand-index-thumb"></i> Camisetas</button>
+                </li>
+                <li>
+                    <button id="pantalones" class="boton-menu boton-categoria"><i class="bi bi-hand-index-thumb"></i> Pantalones</button>
+                </li>
+                <li>
+                    <a class="boton-menu boton-carrito" href="#">
+                        <i class="bi bi-cart-fill"></i> Carrito <span id="numerito" class="numerito">0</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <footer>
+            <p class="texto-footer">© 2022 Carpi Coder</p>
+        </footer>
+    </aside>
+    <main>
+        <h2 class="titulo-principal" id="titulo-principal">Todos los productos</h2>
+        <div id="contenedor-productos" class="contenedor-productos">
+            <!-- Esto se va a rellenar con JS -->
+            
+        </div>
+    </main>
+</div>
+<h1>Productos</h1>
       <h2>Abrigos</h2>
       <div>
         ${Array.isArray(this.abrigos) ? this.abrigos.map(
@@ -88,6 +282,7 @@ export class MyElement extends LitElement {
           `
         ) : 'No se encontraron pantalones'}
       </div>
+      
     `;
   }
 }
