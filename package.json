@@ -6,9 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "articles": "json-server public/db/articles.json -p 5501"
   },
   "dependencies": {
+    "async-prompt": "^1.0.1",
+    "json-server": "^1.0.0-beta.0",
     "lit": "^3.1.2"
   },
   "devDependencies": {
