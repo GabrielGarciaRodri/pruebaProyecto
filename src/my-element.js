@@ -200,7 +200,7 @@ export class MyElement extends LitElement {
     this.camisetas = [];
     this.pantalones = [];
     this.categoriaSeleccionada = 'todos';
-
+    this.productos = [];
   }
 
   connectedCallback() {
@@ -210,38 +210,36 @@ export class MyElement extends LitElement {
 
   async fetchData() {
     try {
-      // const abrigosResponse = await fetch('http://localhost:5501/abrigo');
-      // const camisetasResponse = await fetch('http://localhost:5501/camiseta');
-      // const pantalonesResponse = await fetch('http://localhost:5501/pantalon');
-      // this.abrigos = await abrigosResponse.json();
-      // this.camisetas = await camisetasResponse.json();
-      // this.pantalones = await pantalonesResponse.json();
       const response = await fetch('http://localhost:5501/articles');
       const data = await response.json();
-      this.abrigos = await data.abrigo;
+      this.abrigos = data.abrigo;
       this.camisetas = data.camiseta;
       this.pantalones = data.pantalon;
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   }
+  cambiarCategoria(categoria) {
 
-  render() {
-
-    let productos = [];
+    this.categoriaSeleccionada = categoria;
     switch (this.categoriaSeleccionada) {
       case 'abrigos':
-        productos = this.abrigos;
+        this.productos = this.abrigos;
         break;
       case 'camisetas':
-        productos = this.camisetas;
+        this.productos = this.camisetas;
         break;
       case 'pantalones':
-        productos = this.pantalones;
+        this.productos = this.pantalones;
         break;
       default:
-        productos = [...this.abrigos, ...this.camisetas, ...this.pantalones];
+        this.productos = [...this.abrigos, ...this.camisetas, ...this.pantalones];
     }
+    this.requestUpdate();
+  }
+  render() {
+
+    
     return html`
       <div class="wrapper">
         <aside>
@@ -251,16 +249,16 @@ export class MyElement extends LitElement {
           <nav>
             <ul class="menu">
               <li>
-                <button id="todos" class="boton-menu boton-categoria active"><i class='bx bxs-hand-right'></i>Todos los productos</button>
+                <button @click=${() => this.cambiarCategoria('todos')} id="todos" class="boton-menu boton-categoria ${this.categoriaSeleccionada === 'todos' ? 'active' : ''}"><i class='bx bxs-hand-right'></i>Todos los productos</button>
               </li>
               <li>
-                <button @click=${() => this.cambiarCategoria('abrigos')} id="abrigos" class="boton-menu boton-categoria"><i class="bi bi-hand-index-thumb"></i> Abrigos</button>
+                <button @click=${() => this.cambiarCategoria('abrigos')} id="abrigos" class="boton-menu boton-categoria ${this.categoriaSeleccionada === 'abrigos' ? 'active' : ''}"><i class="bi bi-hand-index-thumb"></i> Abrigos</button>
               </li>
               <li>
-                <button id="camisetas" class="boton-menu boton-categoria"><i class="bi bi-hand-index-thumb"></i> Camisetas</button>
+                <button @click=${() => this.cambiarCategoria('camisetas')} id="camisetas" class="boton-menu boton-categoria ${this.categoriaSeleccionada === 'camisetas' ? 'active' : ''}"><i class="bi bi-hand-index-thumb"></i> Camisetas</button>
               </li>
               <li>
-                <button id="pantalones" class="boton-menu boton-categoria"><i class="bi bi-hand-index-thumb"></i> Pantalones</button>
+                <button @click=${() => this.cambiarCategoria('pantalones')} id="pantalones" class="boton-menu boton-categoria ${this.categoriaSeleccionada === 'pantalones' ? 'active' : ''}"><i class="bi bi-hand-index-thumb"></i> Pantalones</button>
               </li>
               <li>
                 <a class="boton-menu boton-carrito" href="#">
@@ -276,37 +274,13 @@ export class MyElement extends LitElement {
       <main>
         <h2 class="titulo-principal" id="titulo-principal">Todos los productos</h2>
         <div class="contenedor-productos">
-          ${this.abrigos.map(
-            abrigo => html`
+          ${this.productos.map(
+            producto => html`
               <div class="product">
-                <img class="producto-imagen" src="${abrigo.imagen}" alt="${abrigo.nombre}" />
+                <img class="producto-imagen" src="${producto.imagen}" alt="${producto.nombre}" />
                 <div class="producto-detalles">
-                  <p class="producto-titulo">${abrigo.nombre}</p>
-                  <p>${abrigo.precio} COP</p>
-                  <button class="producto-agregar">Agregar al carrito</button>
-                </div>
-              </div>
-            `
-          )}
-          ${this.camisetas.map(
-            camiseta => html`
-              <div class="product">
-                <img class="producto-imagen" src="${camiseta.imagen}" alt="${camiseta.nombre}" />
-                <div class="producto-detalles">
-                  <p class="producto-titulo">${camiseta.nombre}</p>
-                  <p>${camiseta.precio} COP</p>
-                  <button class="producto-agregar">Agregar al carrito</button>
-                </div>
-              </div>
-            `
-          )}
-          ${this.pantalones.map(
-            pantalon => html`
-              <div class="product">
-                <img class="producto-imagen" src="${pantalon.imagen}" alt="${pantalon.nombre}" />
-                <div class="producto-detalles">
-                  <p class="producto-titulo">${pantalon.nombre}</p>
-                  <p>${pantalon.precio} COP</p>
+                  <p class="producto-titulo">${producto.nombre}</p>
+                  <p>${producto.precio} COP</p>
                   <button class="producto-agregar">Agregar al carrito</button>
                 </div>
               </div>
@@ -317,8 +291,18 @@ export class MyElement extends LitElement {
       </div>
     `;
     }
-  cambiarCategoria(categoria) {
-    this.categoriaSeleccionada = categoria;
+  
+
+  agregarAlCarrito(producto) {
+    const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    carrito.push(producto);
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+    const numerito = document.getElementById('numerito');
+    numerito.textContent = carrito.length;
+    numerito.classList.add('active');
+    setTimeout(() => {
+      numerito.classList.remove('active');
+    }, 1000);
   }
 }
 
